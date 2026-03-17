@@ -94,11 +94,11 @@
             100% { transform: rotate(8deg) translateX(10%) scale(1); opacity: 0.15; }
         }
 
-        /* ===== 左侧分类导航栏 ===== */
+        /* ===== 左侧分类导航栏（完全透明背景） ===== */
         .category-sidebar {
             width: 240px;
             height: 100vh;
-            background: rgba(8, 18, 28, 0.5);
+            background: transparent; /* 完全透明 */
             backdrop-filter: blur(18px) saturate(200%);
             -webkit-backdrop-filter: blur(18px) saturate(200%);
             border-right: 1px solid rgba(0, 200, 255, 0.1);
@@ -166,17 +166,16 @@
             transition: all 0.3s ease;
             border: 1px solid transparent;
             text-shadow: 0 0 8px rgba(0,180,255,0.3);
-            /* 完全透明背景 */
-            background: transparent;
+            background: transparent; /* 完全透明 */
             backdrop-filter: blur(2px);
         }
 
         .category-item:hover {
-            /* 悬停时依然无背景，仅通过边框和阴影变化 */
             border-color: rgba(0, 255, 255, 0.3);
             color: white;
             transform: translateX(6px);
             box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+            background: transparent; /* 悬停时依然透明 */
         }
 
         .category-item.active {
@@ -184,6 +183,7 @@
             color: white;
             box-shadow: 0 0 18px rgba(0, 200, 255, 0.3);
             font-weight: 600;
+            background: transparent; /* 激活时依然透明 */
         }
 
         /* ===== 右侧内容区 ===== */
@@ -229,7 +229,7 @@
         }
 
         .nav-card {
-            background: rgba(20, 40, 55, 0.45); /* 恢复为0.45 */
+            background: rgba(20, 40, 55, 0.45);
             backdrop-filter: blur(16px);
             border: 1px solid rgba(0, 200, 255, 0.15);
             border-radius: 28px;
@@ -250,7 +250,7 @@
         }
 
         .nav-card:hover {
-            background: rgba(35, 70, 100, 0.6); /* 悬停略加深，保持毛玻璃 */
+            background: rgba(35, 70, 100, 0.6);
             backdrop-filter: blur(16px);
             border-color: rgba(0, 255, 255, 0.25);
             box-shadow: 0 0 20px rgba(0, 200, 255, 0.2), 0 15px 25px rgba(0, 0, 0, 0.5);
