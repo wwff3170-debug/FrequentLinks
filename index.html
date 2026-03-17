@@ -98,7 +98,7 @@
         .category-sidebar {
             width: 240px;
             height: 100vh;
-            background: rgba(8, 18, 28, 0.5); /* 更透明，增强毛玻璃感 */
+            background: rgba(8, 18, 28, 0.5);
             backdrop-filter: blur(18px) saturate(200%);
             -webkit-backdrop-filter: blur(18px) saturate(200%);
             border-right: 1px solid rgba(0, 200, 255, 0.1);
@@ -157,7 +157,7 @@
 
         .category-item {
             padding: 14px 16px;
-            border-radius: 8px; /* 减小圆角 */
+            border-radius: 8px;
             color: #d0e6f5;
             font-size: 1.1rem;
             font-weight: 500;
@@ -166,13 +166,13 @@
             transition: all 0.3s ease;
             border: 1px solid transparent;
             text-shadow: 0 0 8px rgba(0,180,255,0.3);
-            /* 默认背景几乎透明，让毛玻璃底材显现 */
-            background: rgba(255,255,255,0.02);
-            backdrop-filter: blur(2px); /* 轻微模糊增加质感 */
+            /* 完全透明背景 */
+            background: transparent;
+            backdrop-filter: blur(2px);
         }
 
         .category-item:hover {
-            background: rgba(40, 100, 150, 0.2); /* 半透明悬停背景 */
+            /* 悬停时依然无背景，仅通过边框和阴影变化 */
             border-color: rgba(0, 255, 255, 0.3);
             color: white;
             transform: translateX(6px);
@@ -180,7 +180,6 @@
         }
 
         .category-item.active {
-            background: rgba(0, 160, 220, 0.2); /* 半透明激活背景 */
             border-color: rgba(0, 255, 255, 0.5);
             color: white;
             box-shadow: 0 0 18px rgba(0, 200, 255, 0.3);
@@ -230,8 +229,8 @@
         }
 
         .nav-card {
-            background: rgba(20, 40, 55, 0.25); /* 更低不透明度，增强毛玻璃 */
-            backdrop-filter: blur(16px); /* 增加模糊强度 */
+            background: rgba(20, 40, 55, 0.45); /* 恢复为0.45 */
+            backdrop-filter: blur(16px);
             border: 1px solid rgba(0, 200, 255, 0.15);
             border-radius: 28px;
             padding: 28px 20px;
@@ -251,7 +250,7 @@
         }
 
         .nav-card:hover {
-            background: rgba(35, 70, 100, 0.4); /* 悬停时略微加深，但仍半透明 */
+            background: rgba(35, 70, 100, 0.6); /* 悬停略加深，保持毛玻璃 */
             backdrop-filter: blur(16px);
             border-color: rgba(0, 255, 255, 0.25);
             box-shadow: 0 0 20px rgba(0, 200, 255, 0.2), 0 15px 25px rgba(0, 0, 0, 0.5);
