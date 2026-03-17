@@ -14,12 +14,12 @@
 
         body {
             min-height: 100vh;
-            background: #0b0d10;
+            background: #0a0c12;
             display: flex;
-            overflow: hidden;  /* 防止整体滚动，内部区域各自滚动 */
+            overflow: hidden;
         }
 
-        /* ===== 动态背景（同前） ===== */
+        /* ===== 增强版智能动态背景 ===== */
         .dynamic-bg {
             position: fixed;
             top: 0;
@@ -27,8 +27,9 @@
             width: 100%;
             height: 100%;
             z-index: -2;
-            background: radial-gradient(circle at 30% 40%, #1a2f3f 0%, #0a121c 70%);
-            animation: breathe 16s infinite alternate ease-in-out;
+            background: linear-gradient(125deg, #0a1922 0%, #1b3a4b 30%, #2b4b5e 70%, #0f2a38 100%);
+            background-size: 400% 400%;
+            animation: gradientFlow 18s ease infinite;
         }
 
         .dynamic-bg::before {
@@ -39,73 +40,88 @@
             top: -50%;
             left: -50%;
             background: 
-                radial-gradient(circle at 70% 30%, rgba(0, 180, 255, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 20% 80%, rgba(150, 0, 255, 0.1) 0%, transparent 45%),
-                repeating-linear-gradient(45deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 2px, transparent 2px, transparent 8px);
-            animation: moveGlow 28s infinite linear;
-            transform-origin: center center;
+                radial-gradient(circle at 30% 50%, rgba(100, 220, 255, 0.2) 0%, transparent 35%),
+                radial-gradient(circle at 80% 20%, rgba(200, 100, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 10% 80%, rgba(0, 255, 200, 0.1) 0%, transparent 45%),
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 4px, transparent 4px, transparent 12px);
+            animation: moveLight 24s infinite alternate;
+            mix-blend-mode: overlay;
         }
 
-        @keyframes breathe {
-            0% { opacity: 0.8; filter: brightness(1); }
-            50% { opacity: 1; filter: brightness(1.2); }
-            100% { opacity: 0.8; filter: brightness(1); }
+        .dynamic-bg::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 60% 40%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            animation: pulseGlow 8s infinite alternate;
         }
 
-        @keyframes moveGlow {
-            0% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(3deg) scale(1.05); }
-            100% { transform: rotate(0deg) scale(1); }
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes moveLight {
+            0% { transform: rotate(0deg) scale(1); opacity: 0.6; }
+            50% { transform: rotate(5deg) scale(1.1); opacity: 0.9; }
+            100% { transform: rotate(-5deg) scale(1.2); opacity: 0.6; }
+        }
+
+        @keyframes pulseGlow {
+            0% { opacity: 0.2; }
+            100% { opacity: 0.6; }
         }
 
         /* ===== 左侧分类导航栏 ===== */
         .category-sidebar {
             width: 240px;
             height: 100vh;
-            background: rgba(10, 20, 30, 0.8);
-            backdrop-filter: blur(16px) saturate(180%);
-            -webkit-backdrop-filter: blur(16px) saturate(180%);
-            border-right: 1px solid rgba(0, 255, 255, 0.2);
-            box-shadow: 4px 0 30px rgba(0,0,0,0.7);
+            background: rgba(8, 18, 28, 0.7);
+            backdrop-filter: blur(20px) saturate(200%);
+            -webkit-backdrop-filter: blur(20px) saturate(200%);
+            border-right: 1px solid rgba(0, 255, 255, 0.15);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
             z-index: 10;
             position: relative;
             overflow-y: auto;
             scrollbar-width: thin;
-            scrollbar-color: #2c9faf #1e2a36;
+            scrollbar-color: #2aa0b0 #1f3340;
         }
 
         .category-sidebar::-webkit-scrollbar {
             width: 4px;
         }
         .category-sidebar::-webkit-scrollbar-track {
-            background: #1e2a36;
+            background: #1f3340;
         }
         .category-sidebar::-webkit-scrollbar-thumb {
-            background: #2c9faf;
+            background: #2aa0b0;
             border-radius: 20px;
         }
 
         .site-title {
-            padding: 28px 16px 20px 20px;
-            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
-            margin-bottom: 16px;
+            padding: 24px 16px 16px 20px;
+            border-bottom: 1px solid rgba(0, 200, 255, 0.2);
+            margin-bottom: 12px;
         }
         .site-title h1 {
-            font-size: 2rem;
+            font-size: 1.8rem;  /* 适当减小，确保完整显示 */
             font-weight: 600;
-            letter-spacing: 2px;
-            background: linear-gradient(135deg, #c0f0ff, #8ad0ff, #60c0ff);
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #d0f0ff, #9ad0ff, #7ac8ff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-shadow: 0 0 10px #00ccff88;
+            text-shadow: 0 0 15px #00ccffaa;
             line-height: 1.2;
         }
         .site-title .sub {
             font-size: 0.7rem;
-            color: #6a8f9f;
+            color: #8ab0c0;
             letter-spacing: 1px;
             margin-top: 4px;
             opacity: 0.8;
@@ -116,38 +132,37 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 4px;
-            padding: 0 10px 20px 10px;
+            gap: 6px;
+            padding: 0 12px 20px 12px;
         }
 
         .category-item {
             padding: 14px 16px;
-            margin: 2px 0;
-            border-radius: 16px;
-            color: #b0d4e8;
+            border-radius: 20px;
+            color: #c0e0f0;
             font-size: 1.1rem;
             font-weight: 500;
             letter-spacing: 0.5px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
             border: 1px solid transparent;
-            text-shadow: 0 0 5px rgba(0,160,255,0.3);
+            text-shadow: 0 0 8px rgba(0,200,255,0.4);
             backdrop-filter: blur(4px);
         }
 
         .category-item:hover {
-            background: rgba(30, 100, 140, 0.5);
+            background: rgba(40, 120, 180, 0.4);
             border-color: #2dd4bf;
             color: white;
             transform: translateX(6px);
-            box-shadow: 0 0 15px #00ffff80;
+            box-shadow: 0 0 20px #00ffffb0;
         }
 
         .category-item.active {
-            background: rgba(0, 200, 255, 0.25);
+            background: rgba(0, 180, 240, 0.3);
             border-color: #0ff;
             color: white;
-            box-shadow: 0 0 20px cyan;
+            box-shadow: 0 0 25px cyan;
             font-weight: 600;
         }
 
@@ -160,87 +175,88 @@
             position: relative;
             z-index: 5;
             scrollbar-width: thin;
-            scrollbar-color: #2c9faf #1e2a36;
+            scrollbar-color: #2aa0b0 #1f3340;
         }
 
         .content-area::-webkit-scrollbar {
             width: 6px;
         }
         .content-area::-webkit-scrollbar-track {
-            background: #1e2a36;
+            background: #1f3340;
         }
         .content-area::-webkit-scrollbar-thumb {
-            background: #2c9faf;
+            background: #2aa0b0;
             border-radius: 20px;
         }
 
-        /* 分类标题（右侧顶部） */
         .current-category-title {
             font-size: 2.5rem;
             font-weight: 600;
             margin-bottom: 30px;
             color: transparent;
-            background: linear-gradient(135deg, #fff, #a0e0ff);
+            background: linear-gradient(135deg, #fff, #b0eaff);
             -webkit-background-clip: text;
             background-clip: text;
-            text-shadow: 0 0 20px #0af;
+            text-shadow: 0 0 30px #0af;
             border-left: 6px solid #2dd4bf;
             padding-left: 24px;
         }
 
-        /* 卡片网格 */
+        /* 卡片网格 - 调大最小宽度，让卡片更宽 */
         .links-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 24px;
         }
 
         .nav-card {
-            background: rgba(15, 30, 45, 0.6);
-            backdrop-filter: blur(8px);
+            background: rgba(18, 35, 50, 0.6);
+            backdrop-filter: blur(12px);
             border: 1px solid rgba(0, 255, 255, 0.2);
-            border-radius: 24px;
-            padding: 24px 16px;
+            border-radius: 28px;
+            padding: 28px 20px;
             text-align: center;
-            color: #edf5ff;
+            color: #ecf9ff;
             text-decoration: none;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 500;
-            transition: all 0.25s ease;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             word-break: break-word;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100px;
+            min-height: 120px;
+            /* 移除点击时的明显边框，改为柔光 */
+            outline: none;
         }
 
         .nav-card:hover {
-            background: rgba(30, 100, 150, 0.8);
+            background: rgba(30, 90, 140, 0.8);
             border-color: #0ff;
-            box-shadow: 0 0 30px #00ffff, 0 12px 28px rgba(0, 200, 255, 0.4);
-            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 0 35px #00ffff, 0 15px 30px rgba(0, 200, 255, 0.4);
+            transform: translateY(-8px) scale(1.02);
             color: white;
         }
 
         .nav-card:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 10px cyan;
+            transform: translateY(2px) scale(0.98);
+            box-shadow: 0 5px 20px cyan;
+            transition: 0.1s;
         }
 
-        /* 加载/错误提示 */
         .message-box {
-            color: #aad0f0;
-            padding: 30px;
+            color: #c0e0ff;
+            padding: 40px;
             text-align: center;
             background: rgba(0,255,255,0.05);
-            border-radius: 32px;
-            border: 1px dashed #2c9faf;
-            font-size: 1.2rem;
-            margin-top: 50px;
+            border-radius: 40px;
+            border: 1px dashed #2dd4bf;
+            font-size: 1.3rem;
+            margin-top: 60px;
+            backdrop-filter: blur(8px);
         }
 
-        /* 小屏幕适配 */
         @media (max-width: 700px) {
             .category-sidebar {
                 width: 180px;
@@ -252,7 +268,7 @@
                 font-size: 2rem;
             }
             .links-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             }
         }
     </style>
@@ -264,39 +280,30 @@
     <aside class="category-sidebar">
         <div class="site-title">
             <h1>FrequentLinks</h1>
-            <div class="sub">智能分类·一键触达</div>
+            <div class="sub">智能分类 · 极速直达</div>
         </div>
-        <div class="category-list" id="category-list">
-            <!-- 动态生成分类项 -->
-        </div>
+        <div class="category-list" id="category-list"></div>
     </aside>
 
     <!-- 右侧内容展示区 -->
     <main class="content-area" id="content-area">
         <div class="current-category-title" id="current-category-title">AI</div>
-        <div class="links-grid" id="links-grid">
-            <!-- 动态生成当前分类的卡片 -->
-        </div>
+        <div class="links-grid" id="links-grid"></div>
         <div id="message-area" style="display: none;"></div>
     </main>
 
     <script>
         (function() {
-            // 预定义的分类顺序（也是左侧显示顺序）
             const CATEGORIES_ORDER = ["AI", "报刊导航", "社交媒体", "工作", "实用工具", "学习", "代码", "影视", "其他"];
             
-            // 状态：存储所有链接数据
             let allLinks = [];
-            // 当前选中的分类
-            let currentCategory = CATEGORIES_ORDER[0]; // 默认第一个
+            let currentCategory = CATEGORIES_ORDER[0];
 
-            // DOM 元素
             const categoryListEl = document.getElementById('category-list');
             const currentTitleEl = document.getElementById('current-category-title');
             const linksGridEl = document.getElementById('links-grid');
             const messageAreaEl = document.getElementById('message-area');
 
-            // 智能修复URL
             function fixUrl(rawUrl) {
                 if (!rawUrl || rawUrl.trim() === '') return '#';
                 let url = rawUrl.trim();
@@ -322,7 +329,6 @@
                 return url;
             }
 
-            // 解析CSV行
             function parseCSVLine(line) {
                 const parts = line.split(',').map(s => s.trim());
                 if (parts.length < 3) return null;
@@ -333,7 +339,6 @@
                 };
             }
 
-            // 解析完整CSV文本
             function parseCSV(csvText) {
                 const lines = csvText.split(/\r?\n/);
                 const links = [];
@@ -349,7 +354,6 @@
                 return links;
             }
 
-            // 渲染左侧分类列表
             function renderCategoryList(activeCategory) {
                 categoryListEl.innerHTML = '';
                 CATEGORIES_ORDER.forEach(cat => {
@@ -360,24 +364,20 @@
                     item.addEventListener('click', () => {
                         if (currentCategory === cat) return;
                         currentCategory = cat;
-                        // 更新激活样式
                         document.querySelectorAll('.category-item').forEach(el => el.classList.remove('active'));
                         item.classList.add('active');
-                        // 更新右侧标题和卡片
                         renderCurrentCategory();
                     });
                     categoryListEl.appendChild(item);
                 });
             }
 
-            // 根据 currentCategory 渲染右侧内容
             function renderCurrentCategory() {
                 currentTitleEl.textContent = currentCategory;
                 const filtered = allLinks.filter(link => link.category === currentCategory);
                 
                 linksGridEl.innerHTML = '';
                 if (filtered.length === 0) {
-                    // 显示空状态提示
                     messageAreaEl.style.display = 'block';
                     messageAreaEl.className = 'message-box';
                     messageAreaEl.textContent = '📭 该分类下暂无链接';
@@ -396,7 +396,6 @@
                 });
             }
 
-            // 从CSV加载数据并初始化UI
             function loadCSVAndRender() {
                 fetch('./FrequentLinks.csv')
                     .then(response => {
@@ -406,15 +405,11 @@
                         return response.text();
                     })
                     .then(csvText => {
-                        // 移除BOM
                         if (csvText.charCodeAt(0) === 0xFEFF) {
                             csvText = csvText.slice(1);
                         }
                         allLinks = parseCSV(csvText);
-                        
-                        // 渲染左侧分类（传入当前选中）
                         renderCategoryList(currentCategory);
-                        // 渲染右侧当前分类
                         renderCurrentCategory();
                     })
                     .catch(error => {
@@ -424,7 +419,6 @@
                     });
             }
 
-            // 启动
             loadCSVAndRender();
         })();
     </script>
