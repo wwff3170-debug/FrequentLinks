@@ -1,2 +1,2 @@
 # FrequentLinks
-报刊导航网站
+常用链接导航网站
