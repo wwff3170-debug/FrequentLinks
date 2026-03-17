@@ -5,54 +5,171 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FrequentLinks · 智能导航</title>
     <style>
-        /* 样式部分与上一版本完全相同，此处省略以节省篇幅，实际使用时请保留完整样式 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
         }
+
         body {
             min-height: 100vh;
             background: #0a0c12;
             display: flex;
             overflow: hidden;
         }
-        /* ===== 动态背景 ===== */
-        .dynamic-bg { /* ... */ }
-        .light-bar-1, .light-bar-2 { /* ... */ }
-        /* ===== 左侧导航栏（完全透明） ===== */
+
+        /* ===== 增强动态背景 ===== */
+        .dynamic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(125deg, #0a1a24 0%, #1b3e52 40%, #2b5568 70%, #0f2c3a 100%);
+            background-size: 300% 300%;
+            animation: smoothGradient 20s ease infinite;
+        }
+
+        .dynamic-bg::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 40% 50%, rgba(100, 220, 255, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 30%, rgba(180, 130, 255, 0.1) 0%, transparent 50%);
+            animation: softPulse 15s infinite alternate;
+        }
+
+        /* 两条动态长光带 */
+        .light-bar-1, .light-bar-2 {
+            position: fixed;
+            z-index: -1;
+            background: linear-gradient(90deg, transparent, rgba(100, 255, 255, 0.25), rgba(150, 230, 255, 0.4), rgba(100, 255, 255, 0.25), transparent);
+            filter: blur(30px);
+            border-radius: 100%;
+            pointer-events: none;
+        }
+
+        .light-bar-1 {
+            top: 15%;
+            left: -20%;
+            width: 140%;
+            height: 140px;
+            transform: rotate(-5deg);
+            animation: slideGlow 18s infinite alternate ease-in-out;
+        }
+
+        .light-bar-2 {
+            bottom: 10%;
+            right: -30%;
+            width: 160%;
+            height: 100px;
+            transform: rotate(8deg);
+            background: linear-gradient(90deg, transparent, rgba(180, 220, 255, 0.2), rgba(220, 240, 255, 0.35), rgba(180, 220, 255, 0.2), transparent);
+            animation: slideGlow2 22s infinite alternate ease-in-out;
+        }
+
+        @keyframes smoothGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes softPulse {
+            0% { opacity: 0.4; }
+            100% { opacity: 0.9; }
+        }
+
+        @keyframes slideGlow {
+            0% { transform: rotate(-5deg) translateX(-10%) scale(1); opacity: 0.2; }
+            50% { transform: rotate(-3deg) translateX(10%) scale(1.1); opacity: 0.4; }
+            100% { transform: rotate(-5deg) translateX(-10%) scale(1); opacity: 0.2; }
+        }
+
+        @keyframes slideGlow2 {
+            0% { transform: rotate(8deg) translateX(10%) scale(1); opacity: 0.15; }
+            50% { transform: rotate(5deg) translateX(-10%) scale(1.2); opacity: 0.3; }
+            100% { transform: rotate(8deg) translateX(10%) scale(1); opacity: 0.15; }
+        }
+
+        /* ===== 左侧分类导航栏（完全透明） ===== */
         .category-sidebar {
             width: 240px;
             height: 100vh;
             background: transparent;
             backdrop-filter: blur(18px) saturate(200%);
+            -webkit-backdrop-filter: blur(18px) saturate(200%);
             border-right: 1px solid rgba(0, 200, 255, 0.1);
             box-shadow: 4px 0 30px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
             z-index: 10;
+            position: relative;
             overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #2aa0b0 #1f3340;
+        }
+
+        .category-sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .category-sidebar::-webkit-scrollbar-track {
+            background: #1f3340;
+        }
+        .category-sidebar::-webkit-scrollbar-thumb {
+            background: #2aa0b0;
+            border-radius: 20px;
+        }
+
+        .site-title {
+            padding: 20px 16px 16px 20px;
+            border-bottom: 1px solid rgba(0, 200, 255, 0.15);
+            margin-bottom: 12px;
         }
         .site-title h1 {
             font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: 1px;
             background: linear-gradient(135deg, #e0f4ff, #b0e0ff, #90d0ff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             text-shadow: 0 0 15px #20c0ffaa;
+            line-height: 1.2;
         }
+        .site-title .sub {
+            font-size: 0.7rem;
+            color: #8ab0c0;
+            letter-spacing: 1px;
+            margin-top: 4px;
+            opacity: 0.8;
+        }
+
+        .category-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 0 12px 20px 12px;
+        }
+
         .category-item {
             padding: 14px 16px;
             border-radius: 8px;
             color: #d0e6f5;
             font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
             cursor: pointer;
             transition: all 0.3s ease;
             border: 1px solid transparent;
+            text-shadow: 0 0 8px rgba(0,180,255,0.3);
             background: transparent;
             backdrop-filter: blur(2px);
         }
+
         .category-item:hover {
             border-color: rgba(0, 255, 255, 0.3);
             color: white;
@@ -60,6 +177,7 @@
             box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
             background: transparent;
         }
+
         .category-item.active {
             border-color: rgba(0, 255, 255, 0.5);
             color: white;
@@ -67,29 +185,119 @@
             font-weight: 600;
             background: transparent;
         }
+
         /* ===== 右侧内容区 ===== */
-        .content-area { /* ... */ }
-        .current-category-title { /* ... */ }
-        .links-grid { /* ... */ }
+        .content-area {
+            flex: 1;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 30px 40px;
+            position: relative;
+            z-index: 5;
+            scrollbar-width: thin;
+            scrollbar-color: #2aa0b0 #1f3340;
+        }
+
+        .content-area::-webkit-scrollbar {
+            width: 6px;
+        }
+        .content-area::-webkit-scrollbar-track {
+            background: #1f3340;
+        }
+        .content-area::-webkit-scrollbar-thumb {
+            background: #2aa0b0;
+            border-radius: 20px;
+        }
+
+        .current-category-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: transparent;
+            background: linear-gradient(135deg, #fff, #c0eaff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            text-shadow: 0 0 30px #0af;
+            border-left: 6px solid #2dd4bf;
+            padding-left: 24px;
+        }
+
+        /* 网格布局 - 增大间距和卡片最小宽度，解决拥挤 */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 28px;
+            padding: 0 4px;
+        }
+
         .nav-card {
             background: rgba(20, 40, 55, 0.45);
             backdrop-filter: blur(16px);
             border: 1px solid rgba(0, 200, 255, 0.15);
             border-radius: 28px;
-            padding: 28px 20px;
+            padding: 32px 20px;
+            text-align: center;
             color: #ecf9ff;
             text-decoration: none;
             font-size: 1.1rem;
-            transition: all 0.35s;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            min-height: 120px;
+            font-weight: 500;
+            transition: all 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            word-break: break-word;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 130px;
+            outline: none;
+            line-height: 1.4;
         }
+
         .nav-card:hover {
             background: rgba(35, 70, 100, 0.6);
+            backdrop-filter: blur(16px);
             border-color: rgba(0, 255, 255, 0.25);
+            box-shadow: 0 0 20px rgba(0, 200, 255, 0.2), 0 15px 25px rgba(0, 0, 0, 0.5);
             transform: translateY(-6px) scale(1.02);
+            color: white;
         }
-        /* ... 其他样式保持不变 ... */
+
+        .nav-card:active {
+            transform: translateY(2px) scale(0.98);
+            box-shadow: 0 5px 15px rgba(0, 200, 255, 0.3);
+            transition: 0.1s;
+        }
+
+        .message-box {
+            color: #cce5ff;
+            padding: 40px;
+            text-align: center;
+            background: rgba(0, 200, 255, 0.05);
+            border-radius: 40px;
+            border: 1px dashed rgba(0, 255, 255, 0.3);
+            font-size: 1.3rem;
+            margin-top: 60px;
+            backdrop-filter: blur(8px);
+        }
+
+        @media (max-width: 700px) {
+            .category-sidebar {
+                width: 180px;
+            }
+            .content-area {
+                padding: 20px;
+            }
+            .current-category-title {
+                font-size: 2rem;
+            }
+            .links-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 20px;
+            }
+            .nav-card {
+                padding: 24px 16px;
+                min-height: 110px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -116,7 +324,6 @@
             const CATEGORIES_ORDER = ["AI", "报刊导航", "社交媒体", "工作", "实用工具", "学习", "代码", "影视", "其他"];
             
             let allLinks = [];
-            // 尝试从 sessionStorage 读取上次选中的分类，若无则默认 AI
             let currentCategory = (() => {
                 const stored = sessionStorage.getItem('selectedCategory');
                 return stored && CATEGORIES_ORDER.includes(stored) ? stored : CATEGORIES_ORDER[0];
@@ -185,12 +392,9 @@
                     item.addEventListener('click', () => {
                         if (currentCategory === cat) return;
                         currentCategory = cat;
-                        // 存储当前分类到 sessionStorage
                         sessionStorage.setItem('selectedCategory', cat);
-                        // 更新激活样式
                         document.querySelectorAll('.category-item').forEach(el => el.classList.remove('active'));
                         item.classList.add('active');
-                        // 重新渲染右侧内容
                         renderCurrentCategory();
                     });
                     categoryListEl.appendChild(item);
@@ -234,7 +438,6 @@
                             csvText = csvText.slice(1);
                         }
                         allLinks = parseCSV(csvText);
-                        // 根据 currentCategory 渲染左侧分类（高亮）和右侧内容
                         renderCategoryList(currentCategory);
                         renderCurrentCategory();
                     })
