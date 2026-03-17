@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FrequentLinks · 智能导航</title>
     <style>
-        /* 保留之前的全部样式，并增加管理员面板相关样式 */
+        /* 所有样式保持不变，从之前的最终版完整复制 */
         * {
             margin: 0;
             padding: 0;
@@ -21,7 +21,6 @@
             position: relative;
         }
 
-        /* 动态背景 (同前) */
         .dynamic-bg {
             position: fixed;
             top: 0;
@@ -95,7 +94,6 @@
             100% { transform: rotate(8deg) translateX(10%) scale(1); opacity: 0.15; }
         }
 
-        /* 左侧导航栏（完全透明） */
         .category-sidebar {
             width: 240px;
             height: 100vh;
@@ -187,7 +185,6 @@
             background: transparent;
         }
 
-        /* 管理员按钮 */
         .admin-toggle {
             margin: 16px 12px 20px;
             padding: 12px;
@@ -207,7 +204,6 @@
             box-shadow: 0 0 15px cyan;
         }
 
-        /* 右侧内容区 */
         .content-area {
             flex: 1;
             height: 100vh;
@@ -297,7 +293,6 @@
             backdrop-filter: blur(8px);
         }
 
-        /* 管理员模态框 */
         .admin-modal {
             position: fixed;
             top: 0;
@@ -428,7 +423,6 @@
             <div class="sub">智能分类 · 极速直达</div>
         </div>
         <div class="category-list" id="category-list"></div>
-        <!-- 管理员按钮 -->
         <div class="admin-toggle" id="adminToggle">⚙️ 管理</div>
     </aside>
 
@@ -438,7 +432,6 @@
         <div id="message-area" style="display: none;"></div>
     </main>
 
-    <!-- 管理员模态框（初始隐藏） -->
     <div id="adminModal" class="admin-modal" style="display: none;">
         <div class="admin-panel">
             <span class="close-btn" id="closeModal">&times;</span>
@@ -457,9 +450,7 @@
                     <thead>
                         <tr><th>类别</th><th>名称</th><th>网址</th><th>操作</th></tr>
                     </thead>
-                    <tbody id="tableBody">
-                        <!-- 动态生成行 -->
-                    </tbody>
+                    <tbody id="tableBody"></tbody>
                 </table>
                 <button id="addRowBtn" style="margin-top: 10px;">➕ 添加新行</button>
             </div>
@@ -469,7 +460,7 @@
 
     <script>
         (function() {
-            // ---------- 原有导航功能 ----------
+            // ---------- 基础导航功能 ----------
             const CATEGORIES_ORDER = ["AI", "报刊导航", "社交媒体", "工作", "实用工具", "学习", "代码", "影视", "其他"];
             let allLinks = [];
             let currentCategory = CATEGORIES_ORDER[0];
@@ -494,10 +485,9 @@
             const addRowBtn = document.getElementById('addRowBtn');
             const adminStatus = document.getElementById('adminStatus');
 
-            // 当前编辑的数据（数组）
             let editData = [];
 
-            // URL修复函数
+            // ----- 工具函数 -----
             function fixUrl(rawUrl) {
                 if (!rawUrl || rawUrl.trim() === '') return '#';
                 let url = rawUrl.trim();
@@ -512,7 +502,7 @@
                 return url;
             }
 
-            // 解析CSV
+            // 解析CSV（假设无引号包裹，简单分割）
             function parseCSV(csvText) {
                 const lines = csvText.split(/\r?\n/);
                 const links = [];
@@ -536,13 +526,34 @@
             function linksToCSV(links) {
                 let csv = "类型,名称,网址\n";
                 links.forEach(item => {
-                    // 简单处理，假设内容不含逗号和引号
+                    // 注意：如果内容包含逗号或引号，需要更严格的CSV处理，但本场景较简单
                     csv += `${item.category},${item.name},${item.url}\n`;
                 });
                 return csv;
             }
 
-            // 渲染左侧分类列表
+            // ---------- Unicode 安全的 Base64 编码/解码 ----------
+            function utf8ToBase64(str) {
+                // 将 UTF-8 字符串转换为字节数组，再转为 binary string 后用 btoa
+                const utf8Bytes = new TextEncoder().encode(str);
+                let binary = '';
+                for (let i = 0; i < utf8Bytes.length; i++) {
+                    binary += String.fromCharCode(utf8Bytes[i]);
+                }
+                return btoa(binary);
+            }
+
+            function base64ToUtf8(base64) {
+                // 解码 base64 为 binary string，再转换为 UTF-8 字符串
+                const binaryString = atob(base64);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                return new TextDecoder('utf-8').decode(bytes);
+            }
+
+            // ---------- 渲染 ----------
             function renderCategoryList(activeCategory) {
                 categoryListEl.innerHTML = '';
                 CATEGORIES_ORDER.forEach(cat => {
@@ -561,7 +572,6 @@
                 });
             }
 
-            // 渲染右侧当前分类卡片
             function renderCurrentCategory() {
                 currentTitleEl.textContent = currentCategory;
                 const filtered = allLinks.filter(link => link.category === currentCategory);
@@ -584,7 +594,7 @@
                 });
             }
 
-            // 从CSV文件加载数据（fetch）
+            // 从本地 CSV 加载（普通浏览模式）
             function loadCSVAndRender() {
                 fetch('./FrequentLinks.csv')
                     .then(response => {
@@ -604,29 +614,11 @@
                     });
             }
 
-            // ---------- 管理员面板功能 ----------
-            // 显示模态框
-            adminToggle.addEventListener('click', () => {
-                adminModal.style.display = 'flex';
-                // 从当前 allLinks 填充编辑区（可选）
-                editData = JSON.parse(JSON.stringify(allLinks)); // 深拷贝
-                renderEditTable();
-            });
-
-            closeModal.addEventListener('click', () => {
-                adminModal.style.display = 'none';
-            });
-
-            exitAdminBtn.addEventListener('click', () => {
-                adminModal.style.display = 'none';
-            });
-
-            // 渲染编辑表格
+            // ---------- 管理员面板 ----------
             function renderEditTable() {
                 tableBody.innerHTML = '';
                 editData.forEach((item, index) => {
                     const row = document.createElement('tr');
-                    // 类别列（使用下拉框或输入框）
                     const categoryCell = document.createElement('td');
                     const catInput = document.createElement('input');
                     catInput.value = item.category;
@@ -634,7 +626,7 @@
                     catInput.setAttribute('data-field', 'category');
                     catInput.addEventListener('input', updateEditData);
                     categoryCell.appendChild(catInput);
-                    // 名称列
+
                     const nameCell = document.createElement('td');
                     const nameInput = document.createElement('input');
                     nameInput.value = item.name;
@@ -642,7 +634,7 @@
                     nameInput.setAttribute('data-field', 'name');
                     nameInput.addEventListener('input', updateEditData);
                     nameCell.appendChild(nameInput);
-                    // 网址列
+
                     const urlCell = document.createElement('td');
                     const urlInput = document.createElement('input');
                     urlInput.value = item.url;
@@ -650,7 +642,7 @@
                     urlInput.setAttribute('data-field', 'url');
                     urlInput.addEventListener('input', updateEditData);
                     urlCell.appendChild(urlInput);
-                    // 操作列
+
                     const actionCell = document.createElement('td');
                     const delBtn = document.createElement('span');
                     delBtn.innerHTML = '🗑️';
@@ -658,7 +650,7 @@
                     delBtn.title = '删除';
                     delBtn.addEventListener('click', () => deleteRow(index));
                     actionCell.appendChild(delBtn);
-                    // 可以加编辑按钮，但输入框已支持直接编辑
+
                     row.appendChild(categoryCell);
                     row.appendChild(nameCell);
                     row.appendChild(urlCell);
@@ -667,7 +659,6 @@
                 });
             }
 
-            // 更新底层数据
             function updateEditData(e) {
                 const input = e.target;
                 const index = input.getAttribute('data-index');
@@ -680,12 +671,27 @@
                 renderEditTable();
             }
 
+            // 打开管理员面板
+            adminToggle.addEventListener('click', () => {
+                adminModal.style.display = 'flex';
+                editData = JSON.parse(JSON.stringify(allLinks));
+                renderEditTable();
+            });
+
+            closeModal.addEventListener('click', () => {
+                adminModal.style.display = 'none';
+            });
+
+            exitAdminBtn.addEventListener('click', () => {
+                adminModal.style.display = 'none';
+            });
+
             addRowBtn.addEventListener('click', () => {
                 editData.push({ category: '其他', name: '新链接', url: 'https://' });
                 renderEditTable();
             });
 
-            // 加载CSV按钮：从GitHub读取
+            // 加载CSV按钮：从GitHub读取（使用正确的UTF-8解码）
             loadCsvBtn.addEventListener('click', async () => {
                 const token = githubToken.value.trim();
                 const owner = repoOwner.value.trim();
@@ -702,10 +708,11 @@
                     });
                     if (!response.ok) throw new Error(`GitHub API错误: ${response.status}`);
                     const data = await response.json();
-                    // content 是 base64 编码的
-                    const content = atob(data.content);
-                    if (content.charCodeAt(0) === 0xFEFF) content = content.slice(1);
-                    allLinks = parseCSV(content);
+                    // 使用 base64ToUtf8 解码
+                    const content = base64ToUtf8(data.content);
+                    // 移除可能的BOM
+                    const cleanContent = content.charCodeAt(0) === 0xFEFF ? content.slice(1) : content;
+                    allLinks = parseCSV(cleanContent);
                     editData = JSON.parse(JSON.stringify(allLinks));
                     renderEditTable();
                     adminStatus.innerText = '加载成功';
@@ -714,7 +721,7 @@
                 }
             });
 
-            // 保存到GitHub
+            // 保存到GitHub（使用正确的UTF-8编码）
             saveToGithubBtn.addEventListener('click', async () => {
                 const token = githubToken.value.trim();
                 const owner = repoOwner.value.trim();
@@ -726,7 +733,7 @@
                 }
                 adminStatus.innerText = '保存中...';
                 try {
-                    // 先获取当前文件的sha（用于更新）
+                    // 获取当前文件 sha
                     const getResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
                         headers: { 'Authorization': `token ${token}` }
                     });
@@ -734,9 +741,9 @@
                     const fileData = await getResponse.json();
                     const sha = fileData.sha;
 
-                    // 生成新CSV内容
+                    // 生成新CSV内容并使用 utf8ToBase64 编码
                     const newCsv = linksToCSV(editData);
-                    const contentEncoded = btoa(newCsv);
+                    const contentEncoded = utf8ToBase64(newCsv);
 
                     // 提交更新
                     const putResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
@@ -753,14 +760,13 @@
                     });
                     if (!putResponse.ok) throw new Error(`提交失败: ${putResponse.status}`);
                     adminStatus.innerText = '保存成功！页面将刷新。';
-                    // 刷新页面以显示最新数据
                     setTimeout(() => location.reload(), 1500);
                 } catch (e) {
                     adminStatus.innerText = `保存失败: ${e.message}`;
                 }
             });
 
-            // 点击模态框外部关闭（可选）
+            // 点击模态框外部关闭
             window.addEventListener('click', (e) => {
                 if (e.target === adminModal) adminModal.style.display = 'none';
             });
