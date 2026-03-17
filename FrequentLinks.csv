@@ -27,10 +27,10 @@ AI,Claude,https://claude.ai/new
 报刊导航,全美广播电台,http://wwwnpr.org/
 报刊导航,CNN,http:///www.cnn.com/
 报刊导航,今日头条,https://www.toutiao.com/?wid=1770947133751
-代码,CSDN博客,https://www.csdn.net/?spm=1001.2101.3001.4476
-代码,GitHub,https://github.com/
-代码,PyTorch,https://pytorch.org/
-代码,Replit,https://replit.com/~
+社交媒体,小红书,https://www.xiaohongshu.com/user/profile/65deb3000000000005008e41
+社交媒体,X,https://x.com/home
+社交媒体,You Tube,https://www.youtube.com/
+社交媒体,微博,https://weibo.com/
 工作,华南理工大学,https://www.scut.edu.cn/new/
 工作,实时北京时间,https://old.flipclocker.com/number-clock
 工作,南海区智慧桥梁管理系统,http://120.237.170.2:30101/bridge/bridge
@@ -41,12 +41,6 @@ AI,Claude,https://claude.ai/new
 工作,官洲隧道监测系统,https://hgjc.dipufang.cn/
 工作,顺德区智慧桥梁管理系统,https://shunde-bridge-web.dipufang.cn
 工作,广东省长大桥梁/隧道/边坡结构健康监测平台,https://dev.gdjkjc.cn:50001/
-其他,第1PPT,https://www.1ppt.com/
-其他,小迪土木,https://www.szdipeng.com/home
-社交媒体,小红书,https://www.xiaohongshu.com/user/profile/65deb3000000000005008e41
-社交媒体,X,https://x.com/home
-社交媒体,You Tube,https://www.youtube.com/
-社交媒体,微博,https://weibo.com/
 实用工具,纯净魔法——cliproxy,https://cliproxy.com/zh/
 实用工具,廉价魔法——SakuraCat,https://www.sakuracat.app/
 实用工具,PDF编辑网页,https://www.ilovepdf.com/
@@ -63,6 +57,10 @@ AI,Claude,https://claude.ai/new
 学习,哔哩哔哩,https://www.bilibili.com/
 学习,毛泽东选集,https://weiyinfu.cn/MyStatic/MaoZeDongAnthology/%E7%9B%AE%E5%BD%95.html
 学习,考公——刘文超,https://www.wenchaoedu.com/index
+代码,CSDN博客,https://www.csdn.net/?spm=1001.2101.3001.4476
+代码,GitHub,https://github.com/
+代码,PyTorch,https://pytorch.org/
+代码,Replit,https://replit.com/~
 影视,抖音,https://www.douyin.com/
 影视,腾讯视频,https://v.qq.com/
 影视,优酷,https://www.youku.com/ku/webhome
@@ -72,4 +70,7 @@ AI,Claude,https://claude.ai/new
 影视,看片狂人,https://kpkuang.bond/
 影视,共青春,https://gqc.ink/
 影视,厂长资源,https://www.czzymovie.com/
+其他,第1PPT,https://www.1ppt.com/
+其他,小迪土木,https://www.szdipeng.com/home
 其他,我,https://click.aliyun.com/se/1021361543/?msclkid=396b223f6f2e1cb3a79b4b866e1b8c54
+其他,we,https://yuanbao.tencent.com/chat/naQivTmsDa?yb_channel=3009&yb_dl=js
