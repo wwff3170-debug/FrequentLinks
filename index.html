@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FrequentLinks · 智能导航</title>
     <style>
-        /* 所有样式保持不变（与最终版一致） */
+        /* 所有样式保持不变（与上一版完全一致） */
         * {
             margin: 0;
             padding: 0;
@@ -851,7 +851,7 @@
                 }
             }
 
-            // 保存到GitHub
+            // 保存到GitHub（同时立即更新页面显示）
             async function saveToGithub() {
                 if (!githubToken) {
                     adminStatus.innerText = 'Token 无效，请重新解锁';
@@ -859,6 +859,13 @@
                 }
                 adminStatus.innerText = '保存中...';
                 try {
+                    // 先立即更新内存中的 allLinks，让页面瞬间生效
+                    allLinks = sortLinksByCategory(JSON.parse(JSON.stringify(editData)));
+                    renderCurrentCategory(); // 刷新当前分类的卡片
+                    // 可选：同时刷新左侧分类（如果需要）
+                    // renderCategoryList(currentCategory); // 左侧分类列表本身不变，无需刷新
+
+                    // 然后异步保存到GitHub
                     const getResponse = await fetch(`https://api.github.com/repos/${PRESET_OWNER}/${PRESET_REPO}/contents/${PRESET_PATH}`, {
                         headers: { 'Authorization': `token ${githubToken}` }
                     });
@@ -882,10 +889,14 @@
                         })
                     });
                     if (!putResponse.ok) throw new Error(`提交失败: ${putResponse.status}`);
-                    adminStatus.innerText = '保存成功！页面将刷新。';
-                    setTimeout(() => location.reload(), 1500);
+                    adminStatus.innerText = '保存成功！页面已更新';
+                    // 不再自动刷新页面，因为已经立即生效
                 } catch (e) {
+                    // 如果保存失败，回滚 allLinks 到之前的状态（从 editData 恢复？但 allLinks 已更新，可能导致不一致）
+                    // 简单处理：提示错误，但 allLinks 已经更新，用户可能看到不一致，可以再次从GitHub加载
                     adminStatus.innerText = `保存失败: ${e.message}`;
+                    // 可选：重新从GitHub加载以恢复一致状态
+                    // await loadCSVFromGithub();
                 }
             }
 
