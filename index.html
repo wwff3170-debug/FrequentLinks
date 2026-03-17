@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FrequentLinks · 智能导航</title>
     <style>
-        /* 所有样式保持不变（略去重复，见之前最终版） */
+        /* 所有样式保持不变，仅补充下拉框样式和布局调整 */
         * {
             margin: 0;
             padding: 0;
@@ -336,6 +336,11 @@
             margin-bottom: 10px;
             width: 200px;
         }
+        /* 修复下拉框选项文字颜色 */
+        .admin-panel select option {
+            background: #1a2a3a;
+            color: white;
+        }
         .admin-panel button {
             background: rgba(0,200,255,0.2);
             border: 1px solid cyan;
@@ -349,17 +354,6 @@
         .admin-panel button:hover {
             background: rgba(0,200,255,0.4);
             box-shadow: 0 0 15px cyan;
-        }
-        .admin-panel .password-area {
-            text-align: center;
-            padding: 40px;
-        }
-        .admin-panel .password-area input {
-            width: 250px;
-            margin-right: 10px;
-        }
-        .admin-panel .editor-area {
-            display: none;
         }
         .table-container {
             overflow-x: auto;
@@ -387,6 +381,14 @@
         }
         td input:focus {
             outline: 1px solid cyan;
+        }
+        td select {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid #2aa0b0;
+            color: white;
+            padding: 4px;
+            border-radius: 4px;
         }
         .action-btn {
             background: transparent;
@@ -439,6 +441,17 @@
         .token-input input {
             flex: 1;
         }
+        .action-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .action-bar .status {
+            margin-top: 0;
+            flex: 1;
+        }
 
         @media (max-width: 700px) {
             .category-sidebar { width: 180px; }
@@ -468,67 +481,57 @@
         <div id="message-area" style="display: none;"></div>
     </main>
 
-    <!-- 管理员模态框 -->
+    <!-- 管理员模态框（无密码验证） -->
     <div id="adminModal" class="admin-modal" style="display: none;">
         <div class="admin-panel">
             <span class="close-btn" id="closeModal">&times;</span>
             <h2>🔧 管理员面板</h2>
 
-            <!-- 密码区域 -->
-            <div id="passwordArea" class="password-area">
-                <input type="password" id="adminPassword" placeholder="输入管理员密码" />
-                <button id="unlockBtn">解锁</button>
-                <div id="passwordError" style="color: #ff8888; margin-top: 10px;"></div>
+            <!-- Token 输入（无密码，直接显示） -->
+            <div class="token-input">
+                <input type="password" id="githubToken" placeholder="GitHub Token (需 repo 权限)" />
+                <button id="loadCsvBtn">加载CSV</button>
             </div>
 
-            <!-- 编辑区域（初始隐藏） -->
-            <div id="editorArea" class="editor-area">
-                <!-- Token 输入（每次手动输入） -->
-                <div class="token-input">
-                    <input type="password" id="githubToken" placeholder="GitHub Token (需 repo 权限)" />
-                    <button id="loadCsvBtn">加载CSV</button>
-                </div>
-
-                <!-- 顶部新增行 -->
-                <div class="add-row-bar">
-                    <select id="newCategory">
-                        <option value="AI">AI</option>
-                        <option value="报刊导航">报刊导航</option>
-                        <option value="社交媒体">社交媒体</option>
-                        <option value="工作">工作</option>
-                        <option value="实用工具">实用工具</option>
-                        <option value="学习">学习</option>
-                        <option value="代码">代码</option>
-                        <option value="影视">影视</option>
-                        <option value="其他">其他</option>
-                    </select>
-                    <input type="text" id="newName" placeholder="名称" />
-                    <input type="text" id="newUrl" placeholder="网址" />
-                    <button id="addRowBtn">➕ 添加</button>
-                </div>
-
-                <!-- 搜索框 -->
-                <div class="search-bar">
-                    <input type="text" id="searchInput" placeholder="🔍 按名称搜索..." />
-                    <span id="searchClear" style="cursor:pointer; color:cyan;">✖</span>
-                </div>
-
-                <!-- 表格 -->
-                <div class="table-container">
-                    <table id="editTable">
-                        <thead>
-                            <tr><th>类别</th><th>名称</th><th>网址</th><th>操作</th></tr>
-                        </thead>
-                        <tbody id="tableBody"></tbody>
-                    </table>
-                </div>
-
-                <!-- 保存按钮 -->
-                <div style="margin-top: 15px;">
-                    <button id="saveToGithubBtn">💾 保存到仓库</button>
-                    <button id="exitAdminBtn">🚪 退出管理</button>
-                </div>
+            <!-- 操作按钮区域（移至搜索栏上方） -->
+            <div class="action-bar">
+                <button id="saveToGithubBtn">💾 保存到仓库</button>
+                <button id="exitAdminBtn">🚪 退出管理</button>
                 <div id="adminStatus" class="status"></div>
+            </div>
+
+            <!-- 顶部新增行 -->
+            <div class="add-row-bar">
+                <select id="newCategory">
+                    <option value="AI">AI</option>
+                    <option value="报刊导航">报刊导航</option>
+                    <option value="社交媒体">社交媒体</option>
+                    <option value="工作">工作</option>
+                    <option value="实用工具">实用工具</option>
+                    <option value="学习">学习</option>
+                    <option value="代码">代码</option>
+                    <option value="影视">影视</option>
+                    <option value="其他">其他</option>
+                </select>
+                <input type="text" id="newName" placeholder="名称" />
+                <input type="text" id="newUrl" placeholder="网址" />
+                <button id="addRowBtn">➕ 添加</button>
+            </div>
+
+            <!-- 搜索框 -->
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="🔍 按名称搜索..." />
+                <span id="searchClear" style="cursor:pointer; color:cyan;">✖</span>
+            </div>
+
+            <!-- 表格 -->
+            <div class="table-container">
+                <table id="editTable">
+                    <thead>
+                        <tr><th>类别</th><th>名称</th><th>网址</th><th>操作</th></tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -539,7 +542,6 @@
             const PRESET_OWNER = 'wwff3170-debug';
             const PRESET_REPO = 'FrequentLinks';
             const PRESET_PATH = 'FrequentLinks.csv';
-            const ADMIN_PASSWORD = 'nationnews';
 
             const CATEGORIES_ORDER = ["AI", "报刊导航", "社交媒体", "工作", "实用工具", "学习", "代码", "影视", "其他"];
 
@@ -559,11 +561,6 @@
             const adminToggle = document.getElementById('adminToggle');
             const adminModal = document.getElementById('adminModal');
             const closeModal = document.getElementById('closeModal');
-            const passwordArea = document.getElementById('passwordArea');
-            const editorArea = document.getElementById('editorArea');
-            const adminPassword = document.getElementById('adminPassword');
-            const unlockBtn = document.getElementById('unlockBtn');
-            const passwordError = document.getElementById('passwordError');
             const githubToken = document.getElementById('githubToken');
             const loadCsvBtn = document.getElementById('loadCsvBtn');
             const saveToGithubBtn = document.getElementById('saveToGithubBtn');
@@ -794,18 +791,15 @@
                 const newItem = { category, name, url };
 
                 // 找到该类别的最后位置插入
-                const lastIndex = editData.length; // 默认末尾
-                for (let i = 0; i < editData.length; i++) {
+                let inserted = false;
+                for (let i = editData.length - 1; i >= 0; i--) {
                     if (editData[i].category === category) {
-                        // 找到该类别的最后一个
-                        let last = i;
-                        while (last + 1 < editData.length && editData[last + 1].category === category) last++;
-                        editData.splice(last + 1, 0, newItem);
+                        editData.splice(i + 1, 0, newItem);
+                        inserted = true;
                         break;
                     }
                 }
-                // 如果该类别不存在，则直接添加到末尾（但不会发生，因为类别下拉框已限定）
-                if (!editData.some(item => item.category === category)) {
+                if (!inserted) {
                     editData.push(newItem);
                 }
 
@@ -897,26 +891,12 @@
             // ---------- 事件绑定 ----------
             adminToggle.addEventListener('click', () => {
                 adminModal.style.display = 'flex';
-                passwordArea.style.display = 'block';
-                editorArea.style.display = 'none';
-                adminPassword.value = '';
-                passwordError.innerText = '';
-                // 清空之前的token和状态
-                githubToken.value = '';
+                githubToken.value = ''; // 清空Token
                 adminStatus.innerText = '';
             });
 
             closeModal.addEventListener('click', () => {
                 adminModal.style.display = 'none';
-            });
-
-            unlockBtn.addEventListener('click', () => {
-                if (adminPassword.value === ADMIN_PASSWORD) {
-                    passwordArea.style.display = 'none';
-                    editorArea.style.display = 'block';
-                } else {
-                    passwordError.innerText = '密码错误';
-                }
             });
 
             exitAdminBtn.addEventListener('click', () => {
@@ -929,6 +909,13 @@
             searchClear.addEventListener('click', clearSearch);
 
             loadCsvBtn.addEventListener('click', loadCSVFromGithub);
+            // 在Token输入框按回车触发加载
+            githubToken.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    loadCSVFromGithub();
+                }
+            });
+
             saveToGithubBtn.addEventListener('click', saveToGithub);
 
             // 点击模态框外部关闭
